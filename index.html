@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue todo</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+        /* #table {margin:0 0 10px 0; padding:0 0 0 0; width:1000px;}
+        #div_list   { width:1000px;margin:0 auto;}
+        #tb_list td{border:#C2D0DB 1px solid;}
+         */
+        #tb_list{font-size: 13px;}
+
+        #tb_list th{padding:5px;background:rgb(144, 194, 233);border:#C2D0DB 1px solid;color:rgb(0,0,0);font-weight: lighter;}
+        .listtd {padding:5px; border-bottom:1px solid #e5e5e5;}
+    </style>
+</head>
+<body>
+    <div id="app"><h1>Todo App</h1>
+        <input type="text" v-on:keyup.enter="addItem" v-model="inputText">
+        <button v-on:click="addItem">add</button>
+        <button v-on:click="fetchItems">search</button>
+        <button v-on:click="clearItems">clearAll</button>
+        <div>
+            <!-- {{todoItems}} -->
+            <!-- <li v-for="todoItem in todoItems">
+                {{todoItem.key}}-{{todoItem.val}}
+            </li> -->
+        </div>
+        <br>
+        <table id="tb_list" border="0" width="500" border="0" cellpadding="0" cellspacing="0">
+            <colgroup>
+                <col width="80"/>
+                <col width="150"/>
+                <col width="80"/>
+                <col width="?"/>
+                <col width="80"/>
+            </colgroup>
+            <tr>
+                <th align="center">seq</th>
+                <th align="center">key</th>
+                <th align="center">value</th>
+                <th align="center">설명</th>
+                <th align="center">delete</th>
+            </tr>
+            <tr v-for="todoItem in todoItems">
+                <td class="listtd">{{todoItem.seq}}</td>
+                <td class="listtd">{{todoItem.key}}</td>
+                <td class="listtd">{{todoItem.val}}</td>
+                <td class="listtd">{{todoItem.key}}-{{todoItem.val}}</td>
+                <td class="listtd"><button v-on:click="deleteItem(todoItem.seq,todoItem.key)">delete</button></td>
+            </tr>
+        </table>
+       
+    </div>
+    <script>
+        new Vue({
+            created:function(){
+                this.fetchItems();
+            },
+            el: '#app',
+            data:{
+                    inputText:'',
+                    todoItems:[]
+                },
+            methods: {
+                addItem: function (event) {
+                    //  debugger;
+                    //@ 배열에 추가
+                    //this.todoItems.push({seq:this.todoItems.length,key:'key_'+this.inputText,val:this.inputText});
+
+                    //@스토리지에 추가 후 조회
+                    localStorage.setItem('key_' + this.inputText, this.inputText);
+                    this.fetchItems();
+                    this.inputText = "";
+                    // console.log('add Item');
+                },
+                fetchItems: function (event) {
+                  this.todoItems = [];
+                  for (var i = 0; i < localStorage.length; i++) {
+                    this.todoItems[i]= {seq:i,"key":localStorage.key(i),"val":localStorage.getItem(localStorage.key(i))};
+                  }
+                },
+                deleteItem: function (seq,key) {
+                    // debugger;
+                    // this.$delete(this.todoItems,seq);//배열삭제
+                    // this.todoItems.splice(seq,1);//배열삭제
+                    localStorage.removeItem(key);
+                    this.fetchItems();
+                },
+                clearItems: function (event) {
+                    localStorage.clear();
+                    this.fetchItems();
+                }
+            }
+        });
+       
+      </script>
+
+      
+</body>
+</html>
